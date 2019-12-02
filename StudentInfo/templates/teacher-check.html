@@ -1,0 +1,36 @@
+{% extends 'base_reg.html' %}
+
+{% block title %}{{ student.name }}的成绩{% endblock %}
+
+{% block right_form %}
+<div class="panel panel-info">
+  <div class="panel-body">
+    <div style="text-align: center;">{{ student.name }}的成绩</div>
+  </div>
+</div>
+<table class="table table-hover">
+      <thead>
+        <tr>
+            <th>#</th>
+            <th>课程</th>
+            <th>成绩</th>
+            <th>类型</th>
+            <th>学期</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {% for perform in performs %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{ perform.course.name }}</td>
+                <td>{{ perform.score_num }}</td>
+                <td>{{ perform.type.name }}</td>
+                <td>{{ perform.get_term_display }}</td>
+            </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+
+{% endblock %}

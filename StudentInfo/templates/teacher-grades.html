@@ -1,0 +1,14 @@
+{% extends 'base_reg.html' %}
+
+{% block title %}班级列表{% endblock %}
+
+{% block right_form %}
+    <div class="list-group">
+        {% for grade in grades %}
+            <a href="{% url 'teacher-students' %}?grade_pk={{ grade.pk }}&teacher_pk={{ teacher.pk }}" class="list-group-item">{{ grade.name }}</a>
+        {% empty %}
+            <a class="list-group-item">暂无班级</a>
+        {% endfor %}
+
+    </div>
+{% endblock %}

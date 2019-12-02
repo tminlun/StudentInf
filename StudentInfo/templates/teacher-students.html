@@ -1,0 +1,164 @@
+{% extends 'base_reg.html' %}
+
+{% block title %}学生列表{% endblock %}
+
+{% block right_form %}
+    <table class="table table-hover">
+      <thead>
+        <tr>
+            <th>#</th>
+            <th>名称</th>
+            <th>班级</th>
+            <th>添加成绩</th>
+            <th>查看成绩</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {% for student in students.object_list %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.grade.name }}</td>
+
+                <td>
+                    {# 弹出框按钮 #}
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_{{ student.pk }}" aria-expanded="false" aria-controls="collapse_{{ student.pk }}">
+                        添加成绩
+                    </a>
+                    {# 弹出框 #}
+                    <div id="collapse_{{ student.pk }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_{{ student.pk }}">
+                      <div class="panel-body">
+                        <form>
+                          {# 课程 #}
+                          <div class="form-group">
+                            <label>课程</label>
+                            <select id="course" class="form-control" name="course">
+                                {% for course in courses %}
+                                    <option value="{{ course.pk }}">{{ course.name }}</option>
+                                {% empty %}
+                                    <option>暂无数据</option>
+                                {% endfor %}
+                            </select>
+                          </div>
+                          {# 成绩类型 #}
+                          <div class="form-group">
+                            <label>成绩类型</label>
+                            <select id="performType" class="form-control" name="perform_type">
+                                {% for perform_type in perform_types %}
+                                    <option value="{{ perform_type.pk }}">{{ perform_type.name }}</option>
+                                {% empty %}
+                                    <option>暂无数据</option>
+                                {% endfor %}
+                            </select>
+                          </div>
+                         {# 分数 #}
+                          <div class="form-group">
+                            <label for="exampleInputScore">分数</label>
+                            <input type="number" name="score" class="form-control" id="exampleInputScore" placeholder="请输入成绩">
+                          </div>
+                          {# 学期 #}
+                          <div class="form-group">
+                               <label class="radio-inline">
+                                  <input type="radio" name="term" checked id="inlineRadio1" value="one">第一学期
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" name="term" id="inlineRadio2" value="two"> 第二学期
+                                </label>
+                          </div>
+
+                          <button type="button" class="btn btn-danger" onclick="sub_score({{ student.pk }})">提交</button>
+                        </form>
+                      </div>
+                    </div>
+                </td>
+
+                <td><a role="button" href="{% url 'teacher-check' %}?student_pk={{ student.pk }}">查看成绩</a></td>
+
+            </tr>
+
+        {% endfor %}
+
+      </tbody>
+    </table>
+    {# 分页 #}
+    <nav aria-label="Page navigation" style="text-align: center;">
+      <ul class="pagination">
+      {% if students.has_previous %}
+          <li>
+              <a href="?{{ students.previous_page_number.querystring }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+          </li>
+      {% endif %}
+        {% for page in students.pages %}
+            {% if page %}
+                {# 如果是当前页面 #}
+                {% ifequal page all_blog.number %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+
+                {# 如果是当前页面end #}
+                {# 如果不是当前页面 #}
+                {% else %}
+                    <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                {% endifequal %}
+                {# 如果不是当前页面end #}
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+
+  {% if all_blog.has_next %}
+        <li>
+          <a href="?{{ all_blog.next_page_number.querystring }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+  {% endif %}
+  </ul>
+    </nav>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+
+        // 添加成绩
+        function sub_score(student_pk) {
+            var course = $("#course option:selected").val();  // 课程
+            var score = $("input[name='score']").val();  // 分数
+            var term = $("input[name='term']").val();
+
+            var perform_type = $("select[name='perform_type'] option:selected").val();
+
+            console.log(course, score);
+            var data = {
+                "student_pk": student_pk,
+                "ipt_course": course,
+                "ipt_score": score,
+                "ipt_term":term,
+                "perform_type":perform_type,
+            };
+
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url:"{% url 'teacher-students' %}",
+                data: data,
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+                    location.reload(true);  // 刷新页面
+                    alert(data.msg);  // 提示
+                },
+                // 错误
+                fail:function (data) {
+                    alert(data.msg);
+                }
+            });
+
+        }
+
+    </script>
+{% endblock %}

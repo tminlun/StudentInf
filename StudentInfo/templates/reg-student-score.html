@@ -1,0 +1,72 @@
+{% extends 'base_reg.html' %}
+
+{% block title %}学生成绩{% endblock %}
+
+{% block right_form %}
+{% if performs %}
+<table class="table table-hover">
+      <thead>
+        <tr>
+            <th>#</th>
+            <th>课程</th>
+            <th>成绩</th>
+            <th>类型</th>
+            <th>学期</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {% for perform in performs.object_list %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{ perform.course.name }}</td>
+                <td>{{ perform.score_num }}</td>
+                <td>{{ perform.type.name }}</td>
+                <td>{{ perform.term }}</td>
+            </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+
+    {# 分页 #}
+    <nav aria-label="Page navigation" style="text-align: center;">
+      <ul class="pagination">
+      {% if performs.has_previous %}
+          <li>
+              <a href="?{{ performs.previous_page_number.querystring }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+          </li>
+      {% endif %}
+        {% for page in performs.pages %}
+            {% if page %}
+                {# 如果是当前页面 #}
+                {% ifequal page all_blog.number %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+
+                {# 如果是当前页面end #}
+                {# 如果不是当前页面 #}
+                {% else %}
+                    <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                {% endifequal %}
+                {# 如果不是当前页面end #}
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+
+  {% if all_blog.has_next %}
+        <li>
+          <a href="?{{ all_blog.next_page_number.querystring }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+  {% endif %}
+  </ul>
+    </nav>
+
+{% else %}
+    <p>暂无成绩！</p>
+{% endif %}
+{% endblock %}

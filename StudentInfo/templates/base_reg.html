@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}学生信息管理系统{% endblock %}
+
+{% block extends_head %}
+    <style type="text/css">
+        .regulateLi{
+            list-style: none;
+        }
+        .regulateLi span{
+            color: #555;
+        }
+        .active{
+            background-color: #d9edf7;
+            padding: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!-- 分类 -->
+            <div class="hidden-xs col-sm-4 col-md-3 col-lg-3">
+
+                {% if request.user.role == "student" %}
+                    {# 学生管理 #}
+                    <div class="left_form panel panel-default">
+                        <div class="panel-heading"><strong>学生管理</strong></div>
+                        <div class="panel-body">
+                             <ul class="blog-types">
+                                    <li class="regulateLi " >
+                                        <span style="margin-right: 5px;" class="glyphicon glyphicon-th-large"></span>
+                                        <a href="{% url 'student_score' %}"><span class="{% ifequal current_page "score" %}active{% endifequal %}">成绩查询</span></a>
+                                    </li>
+                                    <li class="regulateLi ">
+                                        <span style="margin-right: 5px;" class="glyphicon glyphicon-th-large"></span>
+                                        <a href="{% url 'student_info' %}"><span class="{% ifequal current_page "info" %}active{% endifequal %}">个人信息</span></a>
+                                    </li>
+                                </ul>
+                         </div>
+                    </div>
+                {% elif request.user.role == "teacher" %}
+                    {# 教师管理 #}
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>教师管理</strong></div>
+                        <div class="panel-body">
+                                <ul class="blog-types">
+                                    {# 课程列表 #}
+                                    <li class="regulateLi">
+                                        <span style="margin-right: 5px;" class="glyphicon glyphicon-th-large"></span>
+                                        <!-- Small button group -->
+                                        <div class="btn-group">
+                                          <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            课程列表 <span class="caret"></span>
+                                          </button>
+                                          <ul class="dropdown-menu">
+                                              <li><a href="{% url 'grades' %}"><span class="{% ifequal current_page "grades" %}active{% endifequal %}">班级列表</span></a></li>
+                                              <li><a href=""><span class="{% ifequal current_page "teacher_score_refer" %}active{% endifequal %}">成绩查询</span></a></li>
+                                          </ul>
+                                        </div>
+                                    </li>
+                                    {# 个人信息 #}
+                                    <li class="regulateLi" style="margin-top: 5px;">
+                                        <span style="margin-right: 5px;" class="glyphicon glyphicon-th-large"></span>
+                                        <a href="{% url 'teacher_info' %}"><span class="{% ifequal current_page "teacher-info" %}active{% endifequal %}">个人信息</span></a>
+                                    </li>
+                                </ul>
+                         </div>
+                    </div>
+                {% else %}
+                    {# 身份不详 #}
+                    <div class="left_form panel panel-default">
+                        <div class="panel-heading"><strong>身份不详</strong></div>
+                        <div class="panel-body">
+                             <ul class="blog-types">
+                                    <li class="regulateLi">
+                                        <span style="margin-right: 5px;" class="glyphicon glyphicon-th-large"></span>
+                                        <a href="{% url 'login' %}">身份不详</a>
+                                    </li>
+                                </ul>
+                         </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- 列表 -->
+            <div class="col-sm-8 col-md-9 col-lg-9">
+                {% block right_form %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

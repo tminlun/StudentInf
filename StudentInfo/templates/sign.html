@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}注册{% endblock %}
+
+{% block content %}
+    {# 登录界面 #}
+    <div class="body">
+        <div class="panel panel-default" style="width: 500px;margin: 0 auto;margin-top: 50px;">
+          <div class="panel-heading" style=" background:#4ac1c1;">注册</div>
+          <div class="panel-body">
+            <form action="{% url 'sing_in' %}" method="POST">
+                {% csrf_token %}
+              {# 用户名 #}
+              <div class="form-group">
+                <label for="exampleInputEmail1">用户名</label>
+                <input type="text" name="username" class="form-control" value="{{ register_form.username.value }}" id="username" placeholder="用户名">
+              </div>
+              {# 邮箱 #}
+              <div class="form-group">
+                <label for="exampleInputEmail1">邮箱</label>
+                <input type="email" name="email" class="form-control" value="{{ register_form.email.value }}" id="email" placeholder="邮箱">
+              </div>
+             {# 密码 #}
+              <div class="form-group">
+                <label for="exampleInputPassword1">密码</label>
+                <input type="password" name="password" class="form-control" value="{{ register_form.password.value }}" id="password" placeholder="密码">
+              </div>
+             {# 确认密码 #}
+              <div class="form-group">
+                <label for="exampleInputPassword1">确认密码</label>
+                <input type="password" name="password_again" class="form-control" value="{{ register_form.password_again.value }}" id="password" placeholder="确认密码">
+              </div>
+
+            {# 身份 #}
+            <div class="form-group">
+                <label class="radio-inline">
+{#                    {{ user.get_role_display }}#}
+                  <input type="radio" checked  name="role" id="inlineRadio1" value="student">学生
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="role" id="inlineRadio2" value="teacher">老师
+                </label>
+            </div>
+            {# 验证码 #}
+            <div class="form-group">
+                {{register_form.captcha}}
+            </div>
+               <button type="submit" class="btn btn-default" style=" background:#4ac1c1;float: right;">注册</button>
+            </form>
+              <div class="error">
+                  {% for k,v in register_form.errors.items %}
+                      {{ v }}
+                  {% endfor %}
+                {{ msg }}
+              </div>
+          </div>
+        </div>
+    </div>
+<script type="text/javascript">
+        //验证码刷新
+         $(function(){
+            $("img.captcha").click(function(){   //更新验证码图片ajax
+                $.getJSON("/captcha/refresh",function(data){
+                    $("img.captcha").attr("src",data.image_url);
+                    $("#id_captcha_0").attr("value",data.key);
+                });
+            });
+        });
+
+    </script>
+{% endblock %}
+
