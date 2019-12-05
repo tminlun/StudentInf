@@ -1,7 +1,7 @@
 {% extends 'base_reg.html' %}
 
 {% block title %}学生个人信息{% endblock %}
-
+{% if student %}
 {% block right_form %}
      {# 个人信息 #}
     <form class="form-horizontal">
@@ -57,7 +57,7 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url:"{% url 'user_info' %}",
+                url:"{% url 'student_info' %}",
                 data: data,
                 async: true,
                 beforeSend:function(xhr, settings){
@@ -75,3 +75,4 @@
         }
     </script>
 {% endblock %}
+{% endif %}

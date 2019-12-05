@@ -76,6 +76,9 @@ class LoginView(View):
                     elif user.role == "teacher":
                         # 老师（默认为个人信息）
                         return redirect(reverse('teacher_info'))
+                    else:
+                        return redirect(reverse('student_info'))
+
                 # 判断身份错误
                 else:
                     return render(request, 'login.html', {

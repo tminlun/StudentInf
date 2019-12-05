@@ -7,7 +7,7 @@ from django.views import View
 from django.http import JsonResponse
 
 
-from .models import Student,Performance,PerformanceType,Teacher,Course
+from .models import Student,Performance,PerformanceType,Teacher,Course,Role
 # Create your views here.
 '''
 # 学生
@@ -49,8 +49,10 @@ class StudentInfo(View):
 
         try:
             student = Student.objects.get(user=user)
-        except Exception:
-            student = Student.objects.get(pk=1)
+        except:
+            role, created = Role.objects.get_or_create(name="student")
+            student, created = Student.objects.get_or_create(user=user, role=role)
+
         return render(request, "reg-student-info.html",{
             "current_page": "info",
             "student": student,
@@ -201,10 +203,7 @@ class TeacherStudents(View):
         # 根据老师获取课程列表
         teacher = Teacher.objects.filter(pk=teacher_pk)[0]
         courses = Course.objects.filter(teacher=teacher)
-
         perform_types = PerformanceType.objects.all()
-
-
 
         # 分页功能
         try:
@@ -231,8 +230,9 @@ class TeacherStudents(View):
         ipt_perform_type = req.get("perform_type", 0)
 
         # 验证
-        if ipt_course_pk == 0 and ipt_score == "" and ipt_term == "" and ipt_perform_type == 0:
+        if ipt_course_pk == 0 or ipt_score == "" or ipt_term == "" or ipt_perform_type == 0:
             return Fail(500, "数据格式错误")
+
         try:
             student = Student.objects.get(pk=student_pk)
             course = Course.objects.get(pk=ipt_course_pk)
